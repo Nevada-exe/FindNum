@@ -1,11 +1,11 @@
-* {
+*{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
 }
 
-body {
+body{
     background: linear-gradient(135deg, #2c3e50, #4a6491);
     height: 100vh;
     display: flex;
@@ -14,7 +14,7 @@ body {
     overflow: hidden;
 }
 
-.game-container {
+.game-container{
     background-color: white;
     border-radius: 15px;
     box-shadow: 0 10px 30px black;
@@ -26,4 +26,48 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+}
+
+h1{
+    color: #2c3e50;
+    margin-bottom: 15xp;
+    font-size: 2rem;
+    text-shadow: 1px black;
+}
+
+.level-info{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.info-item{
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.info-item span{
+    font-weight: bold;
+    color: #3498db;
+}
+
+.combo-container{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.combo-count{
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: red;
+}
+
+.combo-fire{
+    font-size: 1.5rem;
+    display: none;
 }
