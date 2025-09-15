@@ -9,6 +9,7 @@ class FindNumberGame {
         this.combo = 0;
         this.maxCombo = 0;
         this.errors = 0;
+        this.isAnimating = false; // Флаг для предотвращения кликов во время анимации
         
         this.elements = {};
         this.selectors = {
@@ -96,8 +97,6 @@ class FindNumberGame {
     
     renderNumbers() {
         this.elements.grid.innerHTML = '';
-        this.elements.grid.classList.remove('slide-left', 'slide-right', 'slide-center');
-        this.elements.grid.classList.add('slide-center');
         
         this.numbers.forEach(number => {
             const cell = document.createElement('div');
@@ -111,46 +110,144 @@ class FindNumberGame {
             cell.classList.add(this.animationTypes[Math.floor(Math.random() * this.animationTypes.length)]);
             cell.appendChild(numberContent);
             
-            cell.addEventListener('click', () => this.gameStarted && this.handleCellClick(number, cell));
+            cell.addEventListener('click', () => {
+                if (this.gameStarted && !this.isAnimating) {
+                    this.handleCellClick(number, cell);
+                }
+            });
             this.elements.grid.appendChild(cell);
         });
+        
+        // Плавное появление ячеек
+        setTimeout(() => {
+            this.elements.grid.classList.add('visible');
+        }, 50);
     }
     
     handleCellClick(number, cell) {
+        if (this.isAnimating) return;
+        
         if (number === this.targetNumber) {
+            this.isAnimating = true;
             cell.classList.add('found');
             this.combo++;
             if (this.combo > this.maxCombo) this.maxCombo = this.combo;
             this.updateCombo();
             
+            // Анимация правильного ответа
             this.elements.levelComplete.style.display = 'block';
+            this.elements.levelComplete.style.opacity = '0';
+            this.elements.levelComplete.style.transform = 'translate(-50%, -50%) scale(0.5)';
             
-            setTimeout(() => {
-                this.elements.levelComplete.style.display = 'none';
-                this.currentLevel < 9 ? this.nextLevel() : this.endGame();
-            }, 1500);
+            let opacity = 0;
+            const fadeIn = setInterval(() => {
+                opacity += 0.1;
+                this.elements.levelComplete.style.opacity = opacity;
+                this.elements.levelComplete.style.transform = `translate(-50%, -50%) scale(${0.5 + opacity * 0.7})`;
+                
+                if (opacity >= 1) {
+                    clearInterval(fadeIn);
+                    
+                    setTimeout(() => {
+                        const fadeOut = setInterval(() => {
+                            opacity -= 0.1;
+                            this.elements.levelComplete.style.opacity = opacity;
+                            this.elements.levelComplete.style.transform = `translate(-50%, -50%) scale(${0.5 + opacity * 0.7})`;
+                            
+                            if (opacity <= 0) {
+                                clearInterval(fadeOut);
+                                this.elements.levelComplete.style.display = 'none';
+                                this.currentLevel < 9 ? this.nextLevel() : this.endGame();
+                            }
+                        }, 50);
+                    }, 800);
+                }
+            }, 50);
         } else {
             this.combo = 0;
             this.errors++;
             this.updateCombo();
-            this.showError();
+            this.showError(cell);
         }
     }
     
-    showError() {
+    showError(cell) {
+        this.isAnimating = true;
+        
+        // Анимация ошибки - легкое дрожание
+        cell.style.transition = 'transform 0.1s ease';
+        cell.style.transform = 'translateX(-5px)';
+        
+        setTimeout(() => {
+            cell.style.transform = 'translateX(5px)';
+            
+            setTimeout(() => {
+                cell.style.transform = 'translateX(-5px)';
+                
+                setTimeout(() => {
+                    cell.style.transform = 'translateX(0)';
+                    
+                    setTimeout(() => {
+                        cell.style.transition = '';
+                        this.isAnimating = false;
+                    }, 100);
+                }, 100);
+            }, 100);
+        }, 100);
+        
         this.elements.errorMessage.style.display = 'block';
-        setTimeout(() => this.elements.errorMessage.style.display = 'none', 1000);
+        this.elements.errorMessage.style.opacity = '0';
+        
+        let opacity = 0;
+        const fadeIn = setInterval(() => {
+            opacity += 0.2;
+            this.elements.errorMessage.style.opacity = opacity;
+            
+            if (opacity >= 1) {
+                clearInterval(fadeIn);
+                
+                setTimeout(() => {
+                    const fadeOut = setInterval(() => {
+                        opacity -= 0.2;
+                        this.elements.errorMessage.style.opacity = opacity;
+                        
+                        if (opacity <= 0) {
+                            clearInterval(fadeOut);
+                            this.elements.errorMessage.style.display = 'none';
+                        }
+                    }, 50);
+                }, 500);
+            }
+        }, 50);
     }
     
     updateCombo() {
         this.elements.comboCount.textContent = this.combo;
         this.elements.comboFire.style.display = this.combo >= 3 ? 'inline' : 'none';
+        
+        // Анимация комбо
+        if (this.combo >= 3) {
+            this.elements.comboFire.style.transition = 'transform 0.3s ease';
+            this.elements.comboFire.style.transform = 'scale(1.5)';
+            
+            setTimeout(() => {
+                this.elements.comboFire.style.transform = 'scale(1)';
+            }, 300);
+        }
     }
     
     updateUI() {
         this.elements.currentLevel.textContent = this.currentLevel;
         this.elements.targetNumber.textContent = this.targetNumber;
         this.elements.startButton.style.display = this.currentLevel > 1 ? 'none' : 'inline-block';
+        
+        // Плавное изменение целевого числа
+        this.elements.targetNumber.style.transition = 'transform 0.3s ease';
+        this.elements.targetNumber.style.transform = 'scale(1.2)';
+        
+        setTimeout(() => {
+            this.elements.targetNumber.style.transform = 'scale(1)';
+        }, 300);
     }
     
     startGame() {
@@ -160,6 +257,14 @@ class FindNumberGame {
         this.startTime = new Date();
         this.elements.startButton.disabled = true;
         
+        // Плавное скрытие кнопки старта
+        this.elements.startButton.style.transition = 'opacity 0.5s ease';
+        this.elements.startButton.style.opacity = '0';
+        
+        setTimeout(() => {
+            this.elements.startButton.style.display = 'none';
+        }, 500);
+        
         this.timerInterval = setInterval(() => {
             const elapsed = Math.floor((new Date() - this.startTime) / 1000);
             this.elements.timer.textContent = elapsed;
@@ -167,18 +272,34 @@ class FindNumberGame {
     }
     
     nextLevel() {
-        this.currentLevel++;
-        this.generateNumbers();
-        this.renderNumbers();
-        this.updateUI();
+        this.isAnimating = true;
         
-        this.elements.grid.classList.remove('slide-center');
-        this.elements.grid.classList.add('slide-left');
+        // Плавное исчезновение текущей сетки
+        this.elements.grid.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        this.elements.grid.style.opacity = '0';
+        this.elements.grid.style.transform = 'scale(0.8) translateY(20px)';
         
         setTimeout(() => {
-            this.elements.grid.classList.remove('slide-left');
-            this.elements.grid.classList.add('slide-center');
-        }, 800);
+            this.currentLevel++;
+            this.generateNumbers();
+            this.renderNumbers();
+            this.updateUI();
+            
+            // Плавное появление новой сетки
+            this.elements.grid.style.opacity = '0';
+            this.elements.grid.style.transform = 'scale(0.8) translateY(-20px)';
+            
+            setTimeout(() => {
+                this.elements.grid.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                this.elements.grid.style.opacity = '1';
+                this.elements.grid.style.transform = 'scale(1) translateY(0)';
+                
+                setTimeout(() => {
+                    this.isAnimating = false;
+                    this.elements.grid.style.transition = '';
+                }, 500);
+            }, 50);
+        }, 500);
     }
     
     endGame() {
@@ -187,9 +308,20 @@ class FindNumberGame {
         
         this.elements.finalTime.textContent = finalTime;
         this.elements.message.classList.add('success');
+        
+        // Плавное появление сообщения о победе
         this.elements.message.style.display = 'block';
+        this.elements.message.style.opacity = '0';
+        this.elements.message.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            this.elements.message.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            this.elements.message.style.opacity = '1';
+            this.elements.message.style.transform = 'translateY(0)';
+        }, 50);
         
         this.showStats(finalTime);
+        this.isAnimating = false;
     }
     
     showStats(finalTime) {
@@ -197,10 +329,20 @@ class FindNumberGame {
         this.elements.statsCombo.textContent = this.maxCombo;
         this.elements.statsLevel.textContent = `${this.currentLevel}/9`;
         this.elements.statsErrors.textContent = this.errors;
+        
+        // Плавное появление статистики
         this.elements.statsModal.style.display = 'flex';
+        this.elements.statsModal.style.opacity = '0';
+        
+        setTimeout(() => {
+            this.elements.statsModal.style.transition = 'opacity 0.3s ease';
+            this.elements.statsModal.style.opacity = '1';
+        }, 50);
     }
     
     resetGame() {
+        if (this.isAnimating) return;
+        
         clearInterval(this.timerInterval);
         
         this.currentLevel = 1;
@@ -212,9 +354,27 @@ class FindNumberGame {
         
         this.elements.timer.textContent = '0';
         this.elements.startButton.disabled = false;
+        
+        // Плавное появление кнопки старта
         this.elements.startButton.style.display = 'inline-block';
-        this.elements.message.style.display = 'none';
-        this.elements.message.classList.remove('success');
+        this.elements.startButton.style.opacity = '0';
+        
+        setTimeout(() => {
+            this.elements.startButton.style.transition = 'opacity 0.5s ease';
+            this.elements.startButton.style.opacity = '1';
+        }, 50);
+        
+        // Плавное скрытие сообщения
+        if (this.elements.message.style.display === 'block') {
+            this.elements.message.style.transition = 'opacity 0.3s ease';
+            this.elements.message.style.opacity = '0';
+            
+            setTimeout(() => {
+                this.elements.message.style.display = 'none';
+                this.elements.message.classList.remove('success');
+                this.elements.message.style.opacity = '1';
+            }, 300);
+        }
         
         this.generateNumbers();
         this.renderNumbers();

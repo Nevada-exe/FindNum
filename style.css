@@ -325,3 +325,32 @@ button:disabled{
     background: #3498db;
     color: white;
 }
+
+.number-cell{
+    transition: all 0.3s ease, transform 0.5s ease;
+}
+
+.game-grid{
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.game-grid.visible{
+    opacity: 1;
+    transform: scale(1);
+}
+
+.level-complete, .error-message{
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.stats-modal{
+    transition: opacity 0.3s ease;
+}
+
+#start-btn, #reset-btn{
+    transition: all 0.3s ease, opacity 0.5s ease;
+}
+
+.target-number{
+    transition: transform 0.3s ease;
+}
