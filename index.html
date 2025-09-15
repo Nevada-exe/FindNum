@@ -7,8 +7,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <script src="script.js"></script>
-
     <div class="game-container">
         <h1>Найди число</h1>
         
@@ -19,25 +17,27 @@
                 Комбо: <span id="combo-count" class="combo-count">0</span>
                 <span class="combo-fire" id="combo-fire">🔥</span>
             </div>
-        </div> 
-
+        </div>
+        
         <div class="target-number-container">
             <p>Найдите указанное число:</p>
             <div id="target-number" class="target-number">-</div>
         </div>
-
+        
         <div class="game-grid-container">
-            <div class="game-grid" id="target-number"></div>
-            <div class="level-complete" id="level-complete">!</div>
-            <div class="error-message" id="error-message">?</div>
+            <div class="game-grid" id="numbers-grid"></div>
+            <div class="level-complete" id="level-complete"><img src="img/correct.png" alt="Верно!" class="result-image"></div>
+            <div class="error-message" id="error-message"><img src="img/wrong.png" alt="Неправильно!" class="result-image"></div>
         </div>
-
+        
         <div class="controls">
             <button id="start-btn">Начать игру</button>
             <button id="reset-btn">Сбросить</button>
         </div>
-
-        <div class="message" id="message">Поздравляем, вы прошли игру за <span id="final-time">0</span> секунд!</div>
+        
+        <div class="message" id="message">
+            Поздравляем! Вы прошли игру за <span id="final-time">0</span> секунд!
+        </div>
     </div>
 
     <div class="stats-modal" id="stats-modal">
@@ -62,5 +62,7 @@
             <button id="close-stats">Закрыть</button>
         </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
