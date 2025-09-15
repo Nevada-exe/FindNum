@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +21,20 @@
             </div>
         </div> 
 
-        <div></div>
+        <div class="game-grid-container">
+            <div class="game-grid" id="target-number"></div>
+            <div class="level-complete" id="level-complete">!</div>
+            <div class="error-message" id="error-message">?</div>
+        </div>
+
+        <div class="controls">
+            <button id="start-btn">Начать игру</button>
+            <button id="reset-btn">Сбросить</button>
+        </div>
+
+        <div class="message" id="message">Поздравляем, вы прошли игру за <span id="final-time">0</span> секунд!</div>
     </div>
+
+    
 </body>
 </html>
