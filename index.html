@@ -21,6 +21,11 @@
             </div>
         </div> 
 
+        <div class="target-number-container">
+            <p>Найдите указанное число:</p>
+            <div id="target-number" class="target-number">-</div>
+        </div>
+
         <div class="game-grid-container">
             <div class="game-grid" id="target-number"></div>
             <div class="level-complete" id="level-complete">!</div>
@@ -35,6 +40,27 @@
         <div class="message" id="message">Поздравляем, вы прошли игру за <span id="final-time">0</span> секунд!</div>
     </div>
 
-    
+    <div class="stats-modal" id="stats-modal">
+        <div class="stats-content">
+            <h2>Статистика игры</h2>
+            <div class="stats-item">
+                <span>Общее время:</span>
+                <span id="stats-time" class="stats-value">0 сек</span>
+            </div>
+            <div class="stats-item">
+                <span>Максимальное комбо:</span>
+                <span id="stats-combo" class="stats-value">0</span>
+            </div>
+            <div class="stats-item">
+                <span>Уровень пройден:</span>
+                <span id="stats-level" class="stats-value">9/9</span>
+            </div>
+            <div class="stats-item">
+                <span>Ошибок допущено:</span>
+                <span id="stats-errors" class="stats-value">0</span>
+            </div>
+            <button id="close-stats">Закрыть</button>
+        </div>
+    </div>
 </body>
 </html>
